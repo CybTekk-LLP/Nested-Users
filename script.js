@@ -16,9 +16,12 @@ const getUsersHeirarchyJSON = async () => {
 };
 getUsersHeirarchyJSON();
 
+const memoize = new WeakMap();
 const getUsersHeirarchyData = (data, id = null) => {
   const retailers = [];
   const distributors = [];
+  if (memoize.has(id)) return memoize.get(id);
+
   const nestHierarchy = (data, id = null) => {
     const nesting = {};
     data.forEach((item) => {
@@ -37,7 +40,10 @@ const getUsersHeirarchyData = (data, id = null) => {
     });
     return nesting;
   };
+
   let nesting = nestHierarchy(data, id);
+  memoize.set(id, { nesting, distributors, retailers });
+
   return { nesting, distributors, retailers };
 };
 
